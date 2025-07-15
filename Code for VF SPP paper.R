@@ -11,11 +11,9 @@ library("scales")
 library("spatstat.model")
 
 
-vfdf<-read.csv("\\VF_Simulated_Data.csv") #Forthcoming: Will contain randomized marks based on age-sex category
-vf.ys<-list()
-for (i in 1:22){
-  vf.ys[[i]]<-subset.ppp(vfdf,marks(vfdf)$Year_sem==i)
-} #There are 22 semesters starting at 2013 semester 1 and 2023 semester 2
+load("/vfdf.Rdata") #Load simulated data
+#vfdf is the simulated data set for each semester over the 22 semesters and in the window created from the window phx_W_sf
+# Keep in mind that this is a simulated data set and may contain points in the study window where observed VF cases are not possible, these should be handled accordingly.
 
 AZ_Counties<-st_read('//counties_-6648357430706609459 (1)')
 AZ_Counties<-st_transform(AZ_Counties, crs=st_crs("EPSG:3857"))
@@ -54,7 +52,7 @@ plot(AZ_Counties[1], add=TRUE,
 
 
 # Read in Phoenix rasters
-phx_osm<-rast("H:\\Guest\\jginos\\OSM_Phx_L_image.tif")
+phx_osm<-rast("\\OSM_Phx_L_image.tif")
 phx_mask_resc<-mask(phx_osm, cvh) #create masked phx_osm for plotting
 ext(phx_mask_resc)[1:4]<-ext(phx_mask_resc)[1:4]/1000 # rescale it for compatibility with data
 
@@ -69,7 +67,7 @@ par(mar=c(0,0,0,0))
 par(mfrow=c(2,2))
 vf.mt.den<-list()
 for (i in 1:11){
-  vf.mt.den[[i]]<-density(vf.ys[[i]], sigma=5, dimyx=250) #The default is edge=TRUE as well, for edge correction
+  vf.mt.den[[i]]<-density(vf.df[[i]], sigma=5, dimyx=250) #The default is edge=TRUE as well, for edge correction
   vf.mt.den[[i]]$v<-(ifelse(vf.mt.den[[2*i-1]]$v>0.025,vf.mt.den[[i]]$v,NA))
   plot(vf.mt.den[[i]],
        col=alpha(reds,0.7),
@@ -565,7 +563,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s1<-quadscheme(vf.ys[[2*i-1]],nd=250)
+  Q.s1<-quadscheme(vf.df[[2*i-1]],nd=250)
   X<-union.quad(Q.s1)
   cov.lkup1<-lookup.im(covs.s1[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -606,7 +604,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s2<-quadscheme(vf.ys[[2*i]],nd=250)
+  Q.s2<-quadscheme(vf.df[[2*i]],nd=250)
   X<-union.quad(Q.s2)
   cov.lkup1<-lookup.im(covs.s2[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -704,7 +702,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s1<-quadscheme(vf.ys[[2*i-1]],nd=250)
+  Q.s1<-quadscheme(vf.df[[2*i-1]],nd=250)
   X<-union.quad(Q.s1)
   cov.lkup1<-lookup.im(covs.s1[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -746,7 +744,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s2<-quadscheme(vf.ys[[2*i]],nd=250)
+  Q.s2<-quadscheme(vf.df[[2*i]],nd=250)
   X<-union.quad(Q.s2)
   cov.lkup1<-lookup.im(covs.s2[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -843,7 +841,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s1<-quadscheme(vf.ys[[2*i-1]],nd=250)
+  Q.s1<-quadscheme(vf.df[[2*i-1]],nd=250)
   X<-union.quad(Q.s1)
   cov.lkup1<-lookup.im(covs.s1[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -884,7 +882,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s2<-quadscheme(vf.ys[[2*i]],nd=250)
+  Q.s2<-quadscheme(vf.df[[2*i]],nd=250)
   X<-union.quad(Q.s2)
   cov.lkup1<-lookup.im(covs.s2[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -981,7 +979,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s1<-quadscheme(vf.ys[[2*i-1]],nd=250)
+  Q.s1<-quadscheme(vf.df[[2*i-1]],nd=250)
   X<-union.quad(Q.s1)
   cov.lkup1<-lookup.im(covs.s1[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -1021,7 +1019,7 @@ for (i in 1:11){
                 blr.mpd.resc.ofst.stan[[i]])
   
   
-  Q.s2<-quadscheme(vf.ys[[2*i]],nd=250)
+  Q.s2<-quadscheme(vf.df[[2*i]],nd=250)
   X<-union.quad(Q.s2)
   cov.lkup1<-lookup.im(covs.s2[[1]], X$x, X$y)
   cov.lkup.na<-(is.na(cov.lkup1))
@@ -1339,7 +1337,153 @@ View(lrt.qd.no_ofst)
 
 ##################################################################################
 # Code for generating Relative intensity plots is forthcoming 
-# It is currently being exported from a secure environment 
+test.den.qd.mod<-list()
+test.den.ofst.mod<-list()
+test.den.lc.mod<-list()
+test.den.lin.mod<-list()
+pct.removed<-data.frame(matrix(ncol=4,nrow=22)) # Dataframe to store the Percent of outlier-weights removed for visualization, this will depend on epsilon
+names(pct.removed)<-c("quadratic", "linear","land cover","offset")
+gd.pixel.pct<-data.frame(matrix(ncol=4,nrow=22)) # Dataframe storing the percent of pixels with relative intensity between 0.5 and 2 
+names(gd.pixel.pct)<-c("quadratic", "linear","land cover","offset")
+
+vals<-seq(0,20, length.out=256)
+white_pos<-which.min(abs(vals-1.5))
+n1<-white_pos
+cols1<-colorRampPalette(c("blue","white"))(n1)
+n2<-256-n1
+cols2<-colorRampPalette(c("white","darkred"))(n2)
+my_colors<-c(cols1,cols2)
+
+
+par(mfrow=c(2,2))
+par(mar=c(0,0,0,1))
+epsilon=0.005
+for (i in 1:11){
+  ##################################
+  #### quadratic full model Semester 1
+  pred.int<-predict.ppm(fl.env.qd.no.dup.s1[[i]], locations=fl.env.qd.no.dup.s1[[i]]$Q$data)#locations=subset.ppp(test.pp,as.owin(test.mpd.im)))
+  locs.rem<-fl.env.qd.no.dup.s2[[i]]$Q$data[pred.int<epsilon]
+  pct.removed[2*i-1,1]<-length(pred.int[pred.int<epsilon])/fl.env.qd.no.dup.s1[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.qd.mod[[2*i-1]]<-adaptive.density(fl.env.qd.no.dup.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.qd.mod[[2*i-1]]
+  gd.pixel.pct[2*i-1,1]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  ################################# Linear model sem 1
+  pred.int<-predict.ppm(base.mod.no.dup.s1[[i]], locations=base.mod.no.dup.s1[[i]]$Q$data)#locations=subset.ppp(test.pp,as.owin(test.mpd.im)))
+  pct.removed[2*i-1,2]<-length(pred.int[pred.int<epsilon])/base.mod.no.dup.s1[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lin.mod[[2*i-1]]<-adaptive.density(base.mod.no.dup.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.lin.mod[[2*i-1]]
+  gd.pixel.pct[2*i-1,2]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+  ################################# Land cover model sem 1
+  pred.int<-predict.ppm(ofst.NEcovs.s1[[i]], locations=ofst.NEcovs.s1[[i]]$Q$data)#locations=subset.ppp(test.pp,as.owin(test.mpd.im)))
+  pct.removed[2*i-1,3]<-length(pred.int[pred.int<epsilon])/ofst.NEcovs.s1[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lc.mod[[2*i-1]]<-adaptive.density(ofst.NEcovs.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.lc.mod[[2*i-1]]
+  gd.pixel.pct[2*i-1,3]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+  ##################################
+  #### Offset Only Model semester 1
+  pred.int<-predict.ppm(ofst.only.s1[[i]], locations=ofst.only.s1[[i]]$Q$data)
+  pct.removed[2*i-1,4]<-length(pred.int[pred.int<epsilon])/ofst.only.s1[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+
+  test.den.ofst.mod[[2*i-1]]<-adaptive.density(ofst.only.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.ofst.mod[[2*i-1]]
+  gd.pixel.pct[2*i-1,4]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+  ###########################
+  ###########################
+  ###########################
+  ##########################
+  ##################################
+  #### quadratic full model Semester 2
+  pred.int<-predict.ppm(fl.env.qd.no.dup.s2[[i]], locations=fl.env.qd.no.dup.s2[[i]]$Q$data)#locations=subset.ppp(test.pp,as.owin(test.mpd.im)))
+  pct.removed[2*i,1]<-length(pred.int[pred.int<epsilon])/fl.env.qd.no.dup.s2[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.qd.mod[[2*i]]<-adaptive.density(fl.env.qd.no.dup.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.qd.mod[[2*i]]
+  gd.pixel.pct[2*i,1]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+  ################################# Linear model sem 2
+  pred.int<-predict.ppm(base.mod.no.dup.s2[[i]], locations=base.mod.no.dup.s2[[i]]$Q$data)#locations=subset.ppp(test.pp,as.owin(test.mpd.im)))
+  pct.removed[2*i,2]<-length(pred.int[pred.int<epsilon])/base.mod.no.dup.s2[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lin.mod[[2*i]]<-adaptive.density(base.mod.no.dup.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.lin.mod[[2*i]]
+  gd.pixel.pct[2*i,2]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  ################################# Land cover model sem 2
+  pred.int<-predict.ppm(ofst.NEcovs.s2[[i]], locations=ofst.NEcovs.s2[[i]]$Q$data)
+  pct.removed[2*i,3]<-length(pred.int[pred.int<epsilon])/ofst.NEcovs.s2[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lc.mod[[2*i]]<-adaptive.density(ofst.NEcovs.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250, edge=TRUE)
+
+  adap.den<- test.den.lc.mod[[2*i]]
+  gd.pixel.pct[2*i,3]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+  ##################################
+  #### Offset Only Model semester 2
+  pred.int<-predict.ppm(ofst.only.s2[[i]], locations=ofst.only.s2[[i]]$Q$data)
+  pct.removed[2*i,4]<-length(pred.int[pred.int<epsilon])/ofst.only.s2[[i]]$Q$data$n
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.ofst.mod[[2*i]]<-adaptive.density(ofst.only.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=5, dimyx=250,edge=TRUE)
+
+  adap.den<- test.den.ofst.mod[[2*i]]
+  gd.pixel.pct[2*i,4]<-sum((adap.den$v<2)&(adap.den$v>0.5), na.rm = T)/length(adap.den$v)
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+
+}
+
+print(gd.pixel.pct)
+print(pct.removed)
+
 ##################################################################################
 
 ##################################################################################
