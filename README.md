@@ -1,2 +1,4 @@
 # VF-SPP-Analysis
 Code and data used for Spatial Point Pattern Analysis of Valley Fever in the Phoenix Metropolitan Area. 
+The vfdf.Rdata file contains a list of 22 spatial point patters of simulated VF case data. These were obtained by simulating a point pattern from a kernel density estimate of the actual data (with low intensity areas replaced with simulated uniform values to each pixel). Each value from the simulated data set was jittered using a radius of 5 kilometers. Marks representing age-sex category were assigned at random to the points to preserve privacy. The probability of obtaining one of the four marks discussed in the paper were set the the empirical frequency of each mark category for the entire set of points for the whole study period (within the study window).
+A dropbox link will be available to download the larger spatial covariate data sets like NDVI, the HSI data, and land cover/land cover change. 
