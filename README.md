@@ -1,2 +1,2 @@
 # VF-SPP-Analysis
-Code used for Spatial Point Pattern Analysis of Valley Fever in the Phoenix Metropolitan Area
+Code and data used for Spatial Point Pattern Analysis of Valley Fever in the Phoenix Metropolitan Area. 
