@@ -1374,9 +1374,10 @@ par(mfrow=c(2,2))
 par(mar=c(0,0,0,1))
 epsilon=0.001
 
+pilot.bw<-10 # Pilot bandwidth
 
 # Recall that there are 11 years with two semesters each being considered in this analysis.
-
+# Create Relative intensity plots
 for (i in 1:11){
   ##################################
   #### Quadratic full model Semester 1 Relative Intensity
@@ -1389,6 +1390,29 @@ for (i in 1:11){
   plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
   plot(phx_mask_resc, add=TRUE)
   plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  ##################################
+  #### Linear full model Semester 1 Relative Intensity
+  pred.int<-predict.ppm(base.mod.no.dup.s1[[i]], locations=base.mod.no.dup.s1[[i]]$Q$data)
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lin.mod_ep_0.001[[2*i-1]]<-adaptive.density(base.mod.no.dup.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=pilot.bw, dimyx=250,edge=TRUE)
+  adap.den<- test.den.lin.mod_ep_0.001[[2*i-1]]
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  ##################################
+  #### Land Cover/LCH model Semester 1 Relative Intensity
+  pred.int<-predict.ppm(lc.mods.s1[[i]], locations=lc.mods.s1[[i]]$Q$data)
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lc.mod_ep_0.001[[2*i-1]]<-adaptive.density(lc.mods.s1[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=pilot.bw, dimyx=250,edge=TRUE)
+  adap.den<- test.den.lc.mod_ep_0.001[[2*i-1]]
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  
   ##################################
   #### Offset Only Model semester 1 Relative Intensity
   pred.int<-predict.ppm(ofst.only.s1[[i]], locations=ofst.only.s1[[i]]$Q$data)
@@ -1413,6 +1437,28 @@ for (i in 1:11){
   plot(phx_mask_resc, add=TRUE)
   plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
   ##################################
+  #### Linear full model Semester 2 Relative Intensity
+  pred.int<-predict.ppm(base.mod.no.dup.s2[[i]], locations=base.mod.no.dup.s2[[i]]$Q$data)
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lin.mod_ep_0.001[[2*i-1]]<-adaptive.density(base.mod.no.dup.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=pilot.bw, dimyx=250,edge=TRUE)
+  adap.den<- test.den.lin.mod_ep_0.001[[2*i-1]]
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  ##################################
+  #### Land Cover/LCH model Semester 2 Relative Intensity
+  pred.int<-predict.ppm(lc.mods.s2[[i]], locations=lc.mods.s2[[i]]$Q$data)
+  pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
+  test.den.lc.mod_ep_0.001[[2*i-1]]<-adaptive.density(lc.mods.s2[[i]]$Q$data, method="kernel", weights=1/pred.int, ho=pilot.bw, dimyx=250,edge=TRUE)
+  adap.den<- test.den.lc.mod_ep_0.001[[2*i-1]]
+  
+  adap.den$v<-ifelse((adap.den$v<2)&(adap.den$v>0.5),NA,adap.den$v)
+  plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
+  plot(phx_mask_resc, add=TRUE)
+  plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+  
   #### Offset Only Model semester 2 Relative Intensity
   pred.int<-predict.ppm(ofst.only.s2[[i]], locations=ofst.only.s2[[i]]$Q$data)
   pred.int<-ifelse(pred.int<epsilon,min(pred.int[pred.int>epsilon|pred.int==epsilon], na.rm=TRUE),pred.int)
@@ -1423,9 +1469,11 @@ for (i in 1:11){
   plot(adap.den, col=alpha(my_colors,1), main="",zlim=c(0,20))
   plot(phx_mask_resc, add=TRUE)
   plot(adap.den, col=alpha(my_colors,0.7), add=TRUE,zlim=c(0,20))
+}
 
-  ##########################
-  # Now create Predicted Intensity Plots
+##########################
+# Now create Predicted Intensity Plots
+  for (i in 1:11){
   ################################## 
   #### Quadratic full model Semester 1 Predicted Intensity
   preds<-predict(fl.env.qd.no.dup.s1[[i]], dimyx=250)
@@ -1456,6 +1504,7 @@ for (i in 1:11){
 }
 
 ##################################################################################
+
 
 ##################################################################################
 # Marginal effect analysis (and plots)
